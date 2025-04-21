@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage ("Get Source Code") {
+            steps {
+                    git branch: 'main', credentialsId: 'git_access', url:'https://github.com/Royal-Reddy-Yaparla/fusioniq'
+                }
+            }
+        stage('EKS Login') {
+                steps {
+                    script{
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                            sh """
+                                aws eks update-kubeconfig --region us-east-1 --name fusion
+                                kubectl get nodes
+                            """
+                        }
+                    }
+                }
+        }
+        
+        stage('EKS Deploy') {
+            steps {
+                script{
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                        sh """
+                            cd /var/lib/jenkins/workspace/backend/helm-backend
+                            helm upgrade --install backend -n fusioniq .
+                        """
+                     }
+                }
+            }
+        }
+    }
+        
+}
+

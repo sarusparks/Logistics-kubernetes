@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend
+  namespace: fusioniq
+data:
+  SPRING_DATASOURCE_URL: "jdbc:mysql://fusioniq-dev.cox0wuaim3oy.us-east-1.rds.amazonaws.com:3306/dev?createDatabaseIfNotExist=true"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backend
+  namespace: fusioniq
+type: Opaque
+data:
+  SPRING_DATASOURCE_PASSWORD: THFoMzE/U0U4PjhNflVQckopVTpuanJKSFg8ag==  # Base64 for "<password>"
+  SPRING_DATASOURCE_USERNAME: YWRtaW4=          # Base64 for "admin"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: fusioniq 
+  labels:
+    name: backend
+    project: fusioniq
+    tier: app 
+spec:
+  replicas: 2
+  selector:
+    matchLabels: 
+      name: backend
+      project: fusioniq
+      tier: app
+  template: 
+    metadata:
+      labels: 
+        name: backend
+        project: fusioniq
+        tier: app
+    spec:
+      containers:
+      - name: backend
+        image: iamroyalreddy/fusion-backend:v1
+        imagePullPolicy: Always
+        env:
+        - name: SPRING_DATASOURCE_URL  # Fixed Name
+          valueFrom:
+            configMapKeyRef:
+              name: backend
+              key: SPRING_DATASOURCE_URL
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: backend
+              key: SPRING_DATASOURCE_USERNAME
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend
+              key: SPRING_DATASOURCE_PASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: fusioniq
+spec:
+  selector:
+    name: backend
+    project: fusioniq
+    tier: app
+  ports:
+  - protocol: TCP
+    port: 8080 #service-port
+    targetPort: 8080 #container-port

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: logistics 
+  labels:
+    name: backend
+    project: 
+    tier: app 
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels: 
+      name: backend
+      project: logistics
+      tier: app
+  template: 
+    metadata:
+      labels: 
+        name: backend
+        project: logistics
+        tier: app
+    spec:
+      containers:
+      - name: backend
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Always
+        env:
+        - name: SPRING_DATASOURCE_URL  # Fixed Name
+          valueFrom:
+            configMapKeyRef:
+              name: backend
+              key: SPRING_DATASOURCE_URL
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: backend
+              key: SPRING_DATASOURCE_USERNAME
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend
+              key: SPRING_DATASOURCE_PASSWORD

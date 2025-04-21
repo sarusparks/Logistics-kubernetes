@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend
+  namespace: logistics
+data:
+  SPRING_DATASOURCE_URL: "jdbc:mysql://fusioniq-dev.c45s82ms4xgy.us-east-1.rds.amazonaws.com:3306/dev?createDatabaseIfNotExist=true"
