@@ -4,4 +4,4 @@ metadata:
   name: backend
   namespace: logistics
 data:
-  SPRING_DATASOURCE_URL: "jdbc:mysql://fusioniq-dev.c45s82ms4xgy.us-east-1.rds.amazonaws.com:3306/dev?createDatabaseIfNotExist=true"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://logistics-postgres.c52g0ciigsal.us-east-2.rds.amazonaws.com:5432/mydb"

@@ -1,3 +1,0 @@
-statefulset:
-  replicas: 1
-  imageVersion: 8.0.41
