@@ -4,6 +4,7 @@ metadata:
   name: backend
   namespace: logistics
 spec:
+  type: LoadBalancer
   selector:
     name: backend
     project: logistics
